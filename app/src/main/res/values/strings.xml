@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ORG</string>
+    <string name="price_forms_hint">Informe o valor</string>
+    <string name="description_forms_hint">Descreva os produtos desejados</string>
+    <string name="title_forms_hint">Titulo do produto</string>
+    <string name="button_forms_add">Incluir</string>
+    <string name="forms_instruction">Inclua os produtos a serem vistos pelos seus clientes</string>
+    <string name="fba">floating action button</string>
+</resources>
