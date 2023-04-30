@@ -6,4 +6,9 @@
     <string name="button_forms_add">Incluir</string>
     <string name="forms_instruction">Inclua os produtos a serem vistos pelos seus clientes</string>
     <string name="fba">floating action button</string>
+    <string name="extended_button">Adicionar</string>
+    <string name="extended_button_text">inclua novos produtos</string>
+    <string name="hint_title_product">Nome do produto</string>
+    <string name="adiction_import_image">Adicionar</string>
+    <string name="import_image_hint">coloque o link da imagem</string>
 </resources>
