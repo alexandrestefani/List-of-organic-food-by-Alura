@@ -1,44 +1,84 @@
 package com.alexandrestefani.org.Activity
 
-import androidx.appcompat.app.AppCompatActivity
+
+import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.TextView
-import com.alexandrestefani.org.DAO.ProductDAO
+import android.view.Menu
+import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import com.alexandrestefani.org.Database.APPDataBase
+import com.alexandrestefani.org.Extensions.formatToBrazilianCoin
 import com.alexandrestefani.org.Extensions.loadImage
+import com.alexandrestefani.org.Model.ProductList
 import com.alexandrestefani.org.R
 import com.alexandrestefani.org.databinding.ActivityDetailsBinding
-import java.text.NumberFormat
-import java.util.*
 
 class DetailsActivity : AppCompatActivity() {
-    private val dao = ProductDAO()
-    lateinit var binding: ActivityDetailsBinding
+    private var produto: ProductList? = null
+    private var produtoId: Long? = null
+
+    private val binding by lazy {
+        ActivityDetailsBinding.inflate(layoutInflater)
+    }
+    private val produtoDao by lazy {
+        APPDataBase.instance(this).dao_product_interface()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding= ActivityDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        supportActionBar?.hide()
-
-        var positionInt: Int = getIntentDatas()
-        configurateDetailsView(positionInt)
+        tentaCarregarProduto()
     }
 
-    private fun getIntentDatas(): Int {
-        val dados = intent.extras
-        var position = dados?.getString("position")
-        var positionInt: Int = position?.toInt() ?: 0
-        return positionInt
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_toolbar, menu)
+        return true
     }
 
-    private fun configurateDetailsView(positionInt: Int) {
-        var product = dao.getAll()[positionInt]
+    override fun onResume() {
+        super.onResume()
+        produtoId?.let { id ->
+            produto = produtoDao.buscaPorId(id)
+        }
+        produto?.let {
+            preencheCampos(it)
+        } ?: finish()
+    }
 
-        val priceformated: NumberFormat = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
-        binding.priceDetails.text = priceformated.format(product.price).toString()
-        binding.titleTextDetails.text = product.title
-        binding.imageDetails.loadImage(product.image)
-        binding.textExplamationDetails.text = product.description
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+            val intent = Intent(this, FormsActivity::class.java)
+            when (item.itemId) {
+                R.id.edict_item -> {
+                    intent.putExtra(CHAVE_PRODUTO,produto)
+                    startActivity(intent)
+                    true
+                }
+                R.id.kill_item -> {
+                    produto?.let{produtoDao.delete(it)}
+                    finish()
+                    true
+                }
+                R.id.add_item -> {
+                    startActivity(intent)
+                    true
+                }else -> false
+            }
+           return super.onOptionsItemSelected(item)
+    }
+
+    private fun tentaCarregarProduto() {
+        intent.getParcelableExtra<ProductList>(CHAVE_PRODUTO)?.let { produtoCarregado ->
+            produtoId = produtoCarregado.id
+        } ?: finish()
+    }
+
+    private fun preencheCampos(produtoCarregado: ProductList) {
+        with(binding) {
+            imageDetails.loadImage(produtoCarregado.image)
+            titleTextDetails.text = produtoCarregado.title
+            textExplamationDetails.text = produtoCarregado.description
+            priceDetails.text =
+                produtoCarregado.price.formatToBrazilianCoin()
+        }
     }
 }

@@ -1,13 +1,11 @@
 package com.alexandrestefani.org.Adapter
 
-import android.util.Log
+import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
 import com.alexandrestefani.org.Extensions.loadImage
 import com.alexandrestefani.org.Model.ProductList
 import com.alexandrestefani.org.R
@@ -15,7 +13,9 @@ import com.alexandrestefani.org.databinding.CardBinding
 import java.text.NumberFormat
 import java.util.*
 
-class AdapterProductList(produtos: List<ProductList>) : RecyclerView.Adapter<AdapterProductList.MyViewHolder>() {
+class AdapterProductList(
+    private val context: Context,
+    produtos: List<ProductList> = emptyList()) : RecyclerView.Adapter<AdapterProductList.MyViewHolder>() {
 
     private val produtos = produtos.toMutableList()
     private lateinit var mListener: onItemClickListener
@@ -29,7 +29,7 @@ class AdapterProductList(produtos: List<ProductList>) : RecyclerView.Adapter<Ada
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(CardBinding.inflate(
-            LayoutInflater.from(parent.context),
+            LayoutInflater.from(context),
             parent,
             false
         ),mListener)

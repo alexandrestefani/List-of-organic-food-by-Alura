@@ -11,4 +11,8 @@
     <string name="hint_title_product">Nome do produto</string>
     <string name="adiction_import_image">Adicionar</string>
     <string name="import_image_hint">coloque o link da imagem</string>
+    <string name="edict_item_menutext">Alterar</string>
+    <string name="kill_item_menutext">Excluir</string>
+    <string name="add_item_menutext">Adicionar</string>
+
 </resources>

@@ -2,17 +2,17 @@ package com.alexandrestefani.org.Activity
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.alexandrestefani.org.Adapter.AdapterProductList
-import com.alexandrestefani.org.DAO.ProductDAO
-import com.alexandrestefani.org.R
+import com.alexandrestefani.org.Adapter.ListaProdutosAdapter
+import com.alexandrestefani.org.Database.APPDataBase
 import com.alexandrestefani.org.databinding.ActivityLstOfProductBinding
 
 class ListOfProductsActivity : AppCompatActivity() {
-    private val dao = ProductDAO()
-    private val adapterProduto = AdapterProductList(dao.getAll())
+
+
+    private val adapterProduto = ListaProdutosAdapter(this)
     lateinit var binding: ActivityLstOfProductBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +25,9 @@ class ListOfProductsActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        adapterProduto.refresh(dao.getAll())
+        val db = APPDataBase.instance(this)
+        val produtoDaoDatabase = db.dao_product_interface()
+        adapterProduto.atualiza(produtoDaoDatabase.getAllProduct())
     }
 
     private fun adapter_configuration() {
@@ -33,18 +35,16 @@ class ListOfProductsActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapterProduto
 
-        adapterProduto.onItemClickListener(object: AdapterProductList.onItemClickListener {
-            override fun onItemClick(pos: Int) {
-                var product = dao.getAll()[pos]
-                var positionItem = pos.toString()
-
-                val intentToDetails = Intent(this@ListOfProductsActivity, DetailsActivity::class.java)
-                intentToDetails.putExtra("position",positionItem)
-                startActivity(intentToDetails)
+        adapterProduto.quandoClicaNoItem = {
+            val intent = Intent(
+                this,
+                DetailsActivity::class.java
+            ).apply {
+                putExtra(CHAVE_PRODUTO, it)
+                Log.i("test","teste : $it")
             }
-        })
-
-
+            startActivity(intent)
+        }
     }
 
     private fun extendfab_configuration() {
